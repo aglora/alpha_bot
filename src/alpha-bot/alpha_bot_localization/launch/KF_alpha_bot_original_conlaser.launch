@@ -1,0 +1,141 @@
+<launch>
+
+  <!-- MAP_SERVER: CARGAR EL global_map PARA EL AMCL -->
+  <arg name="map_file" default="$(find alpha_bot_localization)/maps/mapa_global.yaml"/>  <!-- Ubicación en la que hemos almacenado el mapa tras el SLAM con gmapping -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" >
+  <param name="frame_id" value="map" />
+  </node>
+
+  
+  <!-- RVIZ: modificado para el seguimiento de caminos con Pure Pursuit -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find alpha_bot_localization)/rviz/KF_alpha_bot_purepursuit.rviz" />
+
+  <!-- AMCL -->
+  <!-- Argumentos -->
+  <arg name="scan_topic"     default="alpha_bot/scan"/> <!-- Definición como argumento de la ruta del topic del lidar:
+                                                           alpha_bot no publica el láser en /scan, como espera gmapping, lo hace en /alpha_bot/scan-->
+  <arg name="initial_pose_x" default="0.0"/>
+  <arg name="initial_pose_y" default="0.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+
+  <!-- AMCL + Suscripción al mapa + Remapeo del topic del lidar -->  
+  <node pkg="amcl" type="amcl" name="amcl">
+  <param name="use_map_topic"             value="true"/>             <!-- Parámetro que obliga al nodo AMCL a suscribirse al topic /map, donde
+                                                                          el nodo map_server está publicando el mapa -->
+  <param name="tf_broadcast" value="true"/>                          <!-- Parámetro para decidir quién publica la transformación map -> odom: EKF o AMCL => el que esté a true -->
+
+   <remap from="scan"                      to="$(arg scan_topic)"/>  <!-- Como alpha_bot publica el láser en alpha_bot/scan, aquí es donde
+                                                                          verdaderamente remapeamos -->
+
+   <!--Otros parámetros configurables: al estar comentados, el algoritmo toma su valor por defecto -->
+
+   <!-- <param name="min_particles"             value="500"/>
+    <param name="max_particles"             value="3000"/>
+    <param name="kld_err"                   value="0.02"/>
+    <param name="update_min_d"              value="0.20"/>
+    <param name="update_min_a"              value="0.20"/>
+    <param name="resample_interval"         value="1"/>
+    <param name="transform_tolerance"       value="0.5"/>
+    <param name="recovery_alpha_slow"       value="0.00"/>
+    <param name="recovery_alpha_fast"       value="0.00"/>
+    <param name="initial_pose_x"            value="$(arg initial_pose_x)"/>
+    <param name="initial_pose_y"            value="$(arg initial_pose_y)"/>
+    <param name="initial_pose_a"            value="$(arg initial_pose_a)"/>
+    <param name="gui_publish_rate"          value="50.0"/>
+    <param name="laser_max_range"           value="3.5"/>
+    <param name="laser_max_beams"           value="180"/>
+    <param name="laser_z_hit"               value="0.5"/>
+    <param name="laser_z_short"             value="0.05"/>
+    <param name="laser_z_max"               value="0.05"/>
+    <param name="laser_z_rand"              value="0.5"/>
+    <param name="laser_sigma_hit"           value="0.2"/>
+    <param name="laser_lambda_short"        value="0.1"/>
+    <param name="laser_likelihood_max_dist" value="2.0"/>
+    <param name="laser_model_type"          value="likelihood_field"/>
+    <param name="odom_model_type"           value="diff"/>
+    <param name="odom_alpha1"               value="0.1"/>
+    <param name="odom_alpha2"               value="0.1"/>
+    <param name="odom_alpha3"               value="0.1"/>
+    <param name="odom_alpha4"               value="0.1"/>
+    <param name="odom_frame_id"             value="odom"/>
+    <param name="base_frame_id"             value="base_footprint"/> -->
+  </node>
+
+  <!-- LOCALIZACIÓN MEDIANTE FUSIÓN SENSORIAL: robot_localization integra un EKF y un UKF -->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization_node">
+   <param name="publish_tf" value="false"/>   <!-- Parámetro para decidir quién publica la transformación map -> odom: EKF o AMCL => el que esté a true -->
+   <param name="frequency" value="30.0"/>
+   <param name="two_d_mode" value="true"/>
+   
+   <param name="map_frame" value="map"/>
+   <param name="odom_frame" value="odom"/>
+   <param name="base_link_frame" value="base_link"/>
+   <param name="base_link_output_frame" value="base_link"/>
+   <param name="world_frame" value="map"/> 
+
+   <param name="odom0" value="alpha_bot/mobile_base_controller/odom"/>
+   <param name="imu0" value="sensor/imu"/>
+   <param name="pose0" value="amcl_pose"/>
+   <param name="pose1" value="laser_pose"/>
+
+   <rosparam param="odom0_config">[false, false, false,
+                                   false, false, false,
+                                   true, true, false,
+                                   false, false, true,
+                                   false, false, false]</rosparam>
+ 
+   <rosparam param="imu0_config">[false, false, false,
+                                  false, false, true,
+                                  false, false, false,
+                                  false, false, true,
+                                  true, false, false]</rosparam>
+ 
+
+   <rosparam param="pose0_config">[true, true, false,
+                                   false, false, true,
+                                   true, false, false,
+                                   false, false, false,
+                                   false, false, false]</rosparam>
+
+   <rosparam param="pose1_config">[true, true, false,
+                                   false, false, true,
+                                   true, false, false,
+                                   false, false, false,
+                                   false, false, false]</rosparam>
+
+   <param name="odom0_relative" value="true"/>
+   <param name="imu0_relative" value="true"/>
+   <param name="pose0_relative" value="true"/>
+   <param name="pose1_relative" value="true"/>
+
+   <param name="odom0_differential" value="false"/>
+   <param name="imu0_differential" value="false"/>
+   <param name="pose0_differential" value="false"/>
+   <param name="pose1_differential" value="false"/>
+  
+   <rosparam param="initial_state">[0.0, 0.0, 0.0,
+                                    0.0, 0.0, 0.0,
+                                    0.0, 0.0, 0.0,
+                                    0.0, 0.0, 0.0,
+                                    0.0, 0.0, 0.0]</rosparam>
+
+  </node>
+
+  <!-- NODO laser_scan_match DEL PAQUETE laser_scan_match DE LA LIBRERÍA scan_tools: sudo apt-get install ros-melodic-scan-tools -->
+    <node pkg="laser_scan_matcher" type="laser_scan_matcher_node" name="laser_scan_matcher_node" output="screen">
+
+    <param name="max_iterations" value="10"/>
+    <param name="fixed_frame" value="map"/>
+    <param name="publish_tf" value="false"/>
+    <param name="publish_pose_stamped" value="true"/> 
+    </node>
+
+ <!-- NODO laser_localization PARA TOMAR LAS ESTIMACIONES DEL NODO "laser_scan_match" Y CONVERTIRLO A MENSAJE DE TIPO "geometry_msgs::PoseWithCovarianceStamped" PARA PODER SER USADO
+      EN EL EKF Y ASÍ MEJORAR SU COMPORTAMIENTO -->
+
+     <node pkg="alpha_bot_localization" type="laser_localization" name="laser_localization" output="screen"/>
+
+  <!-- NODO QUE TRASLADA LOS TOPICS DE ODOM Y GROUND-TRUTH AL MARCO DE REFERENCIA MAP, PARA COMPARAR TODAS LAS FUENTES DE LOCALIZACIÓN DESDE EL MISMO FRAME -->
+       <node pkg="alpha_bot_localization" name="odomToMap_node" type="odomToMap_node"/> 
+  
+</launch>

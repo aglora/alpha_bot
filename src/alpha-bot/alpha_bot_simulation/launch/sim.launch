@@ -1,0 +1,35 @@
+<launch>
+    
+    <!-- Argumentos a variar en las distintas simulaciones, por defecto mapa de alpha_bot original-->
+    <arg name="map_file" default="$(find alpha_bot_simulation)/maps/db_world.yaml"/>
+    <arg name="world_name" default="$(find alpha_bot_simulation)/worlds/db_world.world"/>
+
+    <!-- Llamamos a otros lanzadores para cargar modelo de robot en gazebo, para su control teleoperado
+    de movimiento con la GUI del plugin rqt/robot_steering y visualizar en rviz los datos-->
+    <include file="$(find alpha_bot_simulation)/launch/alpha_bot_view.launch">
+        <arg name="world_name" value="$(arg world_name)"/>
+    </include>
+
+    <include file="$(find alpha_bot_control)/launch/alpha_bot_control.launch"> <!-- Modificado para eliminar el control teleoperado (comentándolo) -->
+    </include>
+
+    <!-- Llamar a Localización -->
+    <include file="$(find alpha_bot_localization)/launch/KF_alpha_bot.launch"/>
+
+    <!--Llamamos al nodo de odometría para que publique la odometría del robot en el topic "/wheel_odometry" -->
+    <node pkg="alpha_bot_odometry" name="alpha_bot_odometry_node" type="alpha_bot_odometry_node" output="screen" />  
+
+    <!--Llamamos al nodo de ground_truth para que corrija los datos del ground truth -->
+    <node pkg="alpha_bot_odometry" name="ground_truth_translation_node" type="ground_truth_translation_node" output="screen" />
+
+    <!--Llamamos al nodo de publicación de waypoints para que publique en "/PlannedPath" un *CAMINO* de prueba -->
+    <!--node pkg="alpha_bot_control" name="PathWaypointsPublisher" type="PathWaypointsPublisher" output="screen" /> -->
+
+    <!--Llamamos al nodo de Pure Pursuit para el seguimiento de caminos -->
+    <node pkg="alpha_bot_control" name="alpha_bot_purepursuit_node" type="alpha_bot_purepursuit_node" output="screen" />
+
+    <!--Llamamos a move_base para utilizar su paquete de costmap-->
+    <include file="$(find alpha_bot_planner)/launch/planner.launch"/>
+
+
+</launch>

@@ -1,0 +1,19 @@
+<launch>
+
+  <!-- MAP_SERVER: CARGAR EL global_map PARA EL AMCL -->
+  <arg name="map_file" default="$(find alpha_bot_localization)/maps/mapa_global.yaml"/>  <!-- Ubicación en la que hemos almacenado el mapa tras el SLAM con gmapping -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" >
+  <param name="frame_id" value="odom" />
+  </node>
+  
+  <!-- RVIZ: modificado para el seguimiento de caminos con Pure Pursuit -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find alpha_bot_localization)/rviz/KF_alpha_bot_purepursuit.rviz" />
+
+  <!-- NODO QUE COPIA EL TOPIC DE GROUND TRUTH AL TOPIC DE ODOMETRY FILTERED, DONDE SE SUSCRIBEN LOS NODOS QUE DESEAN CONOCER LA POSE DEL ROBOT, ADEMÁS PUBLICA LAS TRANSFORMACIONES
+       odom -> map Y odom -> base_link -->
+  <node pkg="alpha_bot_localization" name="groundtruth_node" type="groundtruth_node"/>
+
+  <!-- NODO QUE TRASLADA LOS TOPICS DE ODOM Y GROUND-TRUTH AL MARCO DE REFERENCIA MAP, PARA COMPARAR TODAS LAS FUENTES DE LOCALIZACIÓN DESDE EL MISMO FRAME -->
+       <node pkg="alpha_bot_localization" name="odomToMap_node" type="odomToMap_node"/> 
+  
+</launch>

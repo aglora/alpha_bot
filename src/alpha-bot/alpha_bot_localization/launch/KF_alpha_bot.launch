@@ -1,0 +1,15 @@
+<launch>
+
+<!-- ELEGIR *UNA* VERSIÓN DE LOCALIZACIÓN A USAR -->
+<!-- Versión 1: Versión que hemos usado siempre: el AMCL entra como entrada al EKF que fusiona: AMCL+IMU+Odometría(Modelo) -->
+<!-- Versión 2: Versión anterior pero con odometría por laser, paquete laser_scan_match + nuevo nodo laser_localization -->
+<!-- Versión 3: EKF = IMU + Odom(Modelo) + Odom(Láser); AMCL corrige map->odom (ambos por separado); NOTA: información del láser se usa DOS veces, aunque con distintos métodos => Pbs con covarianzas??--> 
+<!-- Versión 4: Únicamente ground truth, ignorando TODOS los sensores => Topic de Ground Truth como Localización -->
+
+
+<!-- <include file="$(find alpha_bot_localization)/launch/KF_alpha_bot_original.launch"/> 
+     <include file="$(find alpha_bot_localization)/launch/KF_alpha_bot_original_conlaser.launch"/> 
+     <include file="$(find alpha_bot_localization)/launch/KF_alpha_bot_separado_conlaser.launch"/> -->
+     <include file="$(find alpha_bot_localization)/launch/KF_alpha_bot_groundtruth.launch"/> 
+
+</launch>

@@ -1,0 +1,20 @@
+<launch>
+    <arg name="model" />
+    <!-- Parsing xacro and setting robot_description parameter -->
+    <param name="robot_description" command="$(find xacro)/xacro $(find alpha_bot_description)/urdf/alpha_bot.urdf.xacro" />
+    <!-- Setting gui parameter to true for display joint slider -->
+    <!-- param name="use_gui" value="true"/ -->
+    <!-- Starting Joint state publisher node which will publish the joint values -->
+    <!-- node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /-->
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+
+    <!-- Starting robot state publish which will publish tf -->
+    <!-- Paquete encargado de publicar la cinemática directa del robot. Para disminuir errores, aumentaremos la freucuencia -->
+    <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />   <==== ORIGINAL -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+    <param name="publish_frequency" value="50.0">
+    </node>
+
+    <!-- Launch visualization in rviz -->
+    <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find alpha_bot_description)/rviz/alpha_bot_description.rviz" required="true" /> -->
+</launch>

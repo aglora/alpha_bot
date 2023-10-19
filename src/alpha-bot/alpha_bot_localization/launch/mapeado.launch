@@ -1,0 +1,29 @@
+<launch>
+
+    <!-- LANZAMIENTO DEL MODELO -->
+    <!-- Argumentos -->
+    <arg name="world_name" default="$(find alpha_bot_simulation)/worlds/db_world.world"/>
+
+    <!-- Lanzamiento -->
+    <include file="$(find alpha_bot_simulation)/launch/alpha_bot_view.launch">
+        <arg name="world_name" value="$(arg world_name)"/>
+    </include>
+
+    <!-- PAQUETE DE CONTROL -->
+    <include file="$(find alpha_bot_control)/launch/alpha_bot_control.launch">
+    </include>
+
+    <!-- NODO DE MAPEADO (GMAPPING) -->
+    <node pkg="gmapping" type="slam_gmapping" name="gmapping">
+        <param name="base_frame" value="base_footprint"/>
+        <param name="odom_frame" value="odom" />
+        <param name="delta" value="0.05" />    <!-- Valor de resolución a 0.1 píxel/metro, en value = "0.1" -->
+
+        <remap from="scan" to="alpha_bot/scan" /> <!-- alpha_bot no publica el láser en /scan, como espera gmapping, lo hace en /alpha_bot/scan-->
+
+    </node>
+
+    <!-- RVIZ -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find alpha_bot_localization)/rviz/mapeadoalpha_bot.rviz" />
+
+</launch>

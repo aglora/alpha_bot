@@ -1,0 +1,29 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/usuario/proyecto/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/usuario/proyecto/src/alpha-bot/alpha_bot_odometry/include/**",
+        "/home/usuario/proyecto/src/alpha-bot/scan_tools/laser_ortho_projector/include/**",
+        "/home/usuario/proyecto/src/alpha-bot/scan_tools/laser_scan_matcher/include/**",
+        "/home/usuario/proyecto/src/alpha-bot/scan_tools/laser_scan_sparsifier/include/**",
+        "/home/usuario/proyecto/src/alpha-bot/scan_tools/laser_scan_splitter/include/**",
+        "/home/usuario/proyecto/src/alpha-bot/scan_tools/ncd_parser/include/**",
+        "/home/usuario/proyecto/src/alpha-bot/scan_tools/polar_scan_matcher/include/**",
+        "/home/usuario/proyecto/src/alpha-bot/scan_tools/scan_to_cloud_converter/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
