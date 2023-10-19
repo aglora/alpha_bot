@@ -1,6 +1,8 @@
 # ALPHA-BOT PROJECT
 ![Diff_car_image](https://github.com/aglora/alpha_bot/blob/main/imgs/1.png)
 
+Path planning and control of a mobile robot in differential configuration
+
 ## Authors
 [RoboticsLeon](https://github.com/RoboticsLeon) //
 [arubedaq](https://github.com/arubedaq) //
