@@ -1,5 +1,5 @@
 # ALPHA-BOT PROJECT
-![Diff_car_image](https://github.com/ResitanceBot/beta-bot/blob/doc/imgs/1.png)
+![Diff_car_image](https://github.com/aglora/alpha_bot/blob/main/imgs/1.png)
 
 ## Authors
 [RoboticsLeon](https://github.com/RoboticsLeon) //
