@@ -1,14 +1,25 @@
-En este workspace de ROS, podemos encontrar en la carpeta /src/alpha_bot los distintos paquetes desarrollados:
-*/alpha_bot_control: Aquí se encuentra nuestro controlador de alto nivel variante del pure-pursuit.
-*/alpha_bot_description: Contiene el modelo del robot en xacro.
-*/alpha_bot_localization: Permite elegir entre ground_truth, odometría con encoders, odometría láser, integración de todo ello por EKF.
-*/alpha_bot_odometry: Contiene la propia odometría por giro en ruedas.
-*/alpha_bot_planner: Contiene el planificador de Dijkstra, además de lanzar move_base para costmap.
-*/alpha_bot_simulation: Se encarga de lanzar la simulación en Gazebo, la representación visual de datos en RVIZ, todos los paquetes necesarios para el funcionamiento íntegro del sistema, y rqt_steering para permitir variar parámetros del controlador de alto nivel.
+# ALPHA BOT PROJECT
+![Diff_car_image](https://github.com/ResitanceBot/beta-bot/blob/doc/imgs/1.png)
 
-Si se desea lanzar el programa, puede usarse el script ScriptEjecucion.sh con el comando:
+## Authors
+[RoboticsLeon](https://github.com/RoboticsLeon) //
+[arubedaq](https://github.com/arubedaq) //
+[aglora](https://github.com/aglora) 
+
+## WORKSPACE DESCRIPTION
+In this ROS workspace of our project, we can find in the folder /src/alpha_bot the following developed packages:
+*/alpha_bot_control: Here is our high-level driver variant of the pure-pursuit algorithm.
+*/alpha_bot_description: Contains the robot model in xacro.
+*/alpha_bot_localization: It allows to choose between ground_truth, odometry with encoders, laser odometry, integration of all of them by EKF.
+*/alpha_bot_odometry: It contains its own odometry per wheel rotation.
+*/alpha_bot_planner: It contains Dijkstra's planner, as well as launching move_base for costmap.
+*/alpha_bot_simulation: It is responsible for launching the simulation in Gazebo, the visual representation of data in RVIZ, all the packages necessary for the full operation of the system, and rqt_steering to allow varying high-level controller parameters.
+
+![Diff_car_image](https://github.com/ResitanceBot/alpha_bot/imgs/demo.gif)
+
+If you want to launch the program, you can use the script ScriptEjecucion.sh with the command:
 ./ScriptEjecucion.sh
 
-Si se desea lanzar por uno mismo, puede usarse sim.launch, ya que este llamará a todo lo necesario. Para ello:
+If you want to launch by yourself, you can use sim.launch, as it will call everything you need. To do this:
 source devel/setup.sh
 roslaunch alpha_bot_simulation sim.launch
